@@ -7,6 +7,7 @@ var config = require('./data/config.json');
 var comments = require('./addons/data/comments.json');
 var members = require('./addons/data/members.json');
 
+
 var komennot = [
   '!ping - palauttaa pong, enimmäkseen testaamista varten',
   '!bilis - luo uuden biljardipelin (2v2)',
@@ -33,12 +34,13 @@ client.on('ready', () => {
          var member_datas = {};
          member_datas['name'] =  memArr[j].displayName;
          member_datas['last_online'] = "";
-         member_datas['osu_id'] = "";
+         member_datas['osu_username'] = "";
          member_datas['battle_name'] = "";
          guild_members[memArr[j].id] = member_datas
         }
         members.guilds[guild_id]=guild_members;
     }
+     var osu = require('./addons/osu.js')(client, members.guilds);
     console.log('Settings done');
 });
 
