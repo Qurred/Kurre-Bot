@@ -46,13 +46,15 @@ module.exports = function(client, members){
           result = result[0];
           var res = new discord.RichEmbed()
           .setTitle('osu! profiili')
+          .setDescription('Antamasi nimimerkin avulla löydettiin seuraava profiili' )
           .setColor(0x00AE86)
           .setThumbnail('https://a.ppy.sh/'+result['user_id'])
           .addField('Profiilin nimimerkki', result['username'])
           .addField('Profiilin taso', result['level'])
           .addField('PP', result['pp_raw'])
           .addField('Tarkkuus',result['accuracy'])
-          .addField('Kotimaa ', result['country']);
+          .addField('Kotimaa ', result['country'])
+          .setFooter('Tämä profiili liitetään tunnukseesi ' + msg.author.username);
           msg.author.sendEmbed(res);
         });
         }
