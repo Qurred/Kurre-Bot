@@ -1,4 +1,5 @@
 # Kurre-Bot
+![Kurre-bot](kapy.png)
 A test to try Discord.js and also to have some fun with frinds.
 Currently bot doesn't have much functionality, but with time I will add features.
 
