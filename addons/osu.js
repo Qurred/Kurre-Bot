@@ -37,26 +37,26 @@ module.exports = function(client, members){
           path: '/api/get_user?u='+ osu_username + '&k=' + osu_config.api
         };
         callback = function(response) {
-        var str = '';
-        response.on('data', function (chunk) {
-          str += chunk;
-        });
-        response.on('end', function () {
-          var result = JSON.parse(str);
-          result = result[0];
-          var res = new discord.RichEmbed()
-          .setTitle('osu! profiili')
-          .setDescription('Antamasi nimimerkin avulla löydettiin seuraava profiili' )
-          .setColor(0x00AE86)
-          .setThumbnail('https://a.ppy.sh/'+result['user_id'])
-          .addField('Profiilin nimimerkki', result['username'])
-          .addField('Profiilin taso', result['level'])
-          .addField('PP', result['pp_raw'])
-          .addField('Tarkkuus',result['accuracy'])
-          .addField('Kotimaa ', result['country'])
-          .setFooter('Tämä profiili liitetään tunnukseesi ' + msg.author.username);
-          msg.author.sendEmbed(res);
-        });
+          var str = '';
+          response.on('data', function (chunk) {
+            str += chunk;
+          });
+          response.on('end', function () {
+            var result = JSON.parse(str);
+            result = result[0];
+            var res = new discord.RichEmbed()
+            .setTitle('osu! profiili')
+            .setDescription('Antamasi nimimerkin avulla löydettiin seuraava profiili\nTämä profiili liitetään tunnukseesi <@' + msg.author.id + '>')
+            .setColor(0xF999FF)
+            .setThumbnail('https://a.ppy.sh/'+result['user_id'])
+            .addField('Profiilin tiedot',result['username']+'\nTaso:\t' +
+             parseFloat(result['level']).toFixed(2) +
+             '\nPP:\t' + parseFloat(result['level']).toFixed(2) +
+             '\nTarkkuus:\t' + parseFloat(result['accuracy']).toFixed(2) +
+             ' %\nKotimaa:\t' + result['country'])
+            .setFooter('Tämä kysely luotiin käyttämällä osu!:n tarjoamaa API:a (https://github.com/ppy/osu-api/wiki)');
+            msg.author.sendEmbed(res);
+          });
         }
         http.request(options, callback).end();
       }

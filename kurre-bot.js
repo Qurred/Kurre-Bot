@@ -69,6 +69,21 @@ client.on('message', msg => {
     }
   }else if(message[0] === '!datat' && msg.author.id === config.owner_id){
     msg.channel.sendMessage(JSON.stringify(members.guilds));
+  }else if(message[0]+" "+message[1] === '!Kurre-bot kehitys'){
+    var res = new discord.RichEmbed()
+    .setTitle('Kurre-bot v.' +config.version)
+    .setDescription('Kurre-bot on jatkuvan kehityksen alla joten uusia ominaisuuksia voi tulla nopeaa tahtia, mutta niiden vakautta ei taata ennen kunnollista korjaamista ja koodin optimointia')
+    .addField('Optimointi', 'Kurre-bot pohjautuu Node.js ja Discord.js paketteihin. Qurredin kirjoittama koodi on luotu nopeasti PoC idealla. Tästä johtuen ohjelman suoritus on raskasta ja eritoten !osu komennot kuluttavat tehoa runsaasti')
+    .addField('!Osu','Osu!:n liittyvät komennot ovat kehitteillä vielä. Tällä hetkellä on vain mahdollista lisätä väliaikaisesti tunnus')
+    .addField('Tallennus', 'Jokainen sovellus tarvitsee jonkinlaisen tietokannan. Tällä hetkellä Kurre-bot hyödyntää koneen välimuistia tietojen tallentamiseen. Tästä johtuen jokainen uudelleen käynnistys botin osalta (ja muutokset) nollaavat kaikki tallennukset. Tämä lisää sovelluksen käynnistysaikaa ja heikentää käytettävyyttä. Kehittäjä ei ole päättänyt vielä kunnollista formaattia tallentamista varten, eikä täten kirjoita tallentavaa koodia koska uudelleen kirjoittaminen myöhemmässä vaiheessa osoittautuu helposti työlääksi ja logiikan uudelleen luomiseksi.')
+    .setFooter('Lisää voi kysyä kehittäjältä');
+    msg.channel.sendEmbed(res);
+  }else if (message[0] === '!Kurre-bot') {
+      var res = new discord.RichEmbed()
+      .setTitle('Kurre-bot v.' +config.version)
+      .setDescription('Kurre-bot on Juho \'Qurred\' K.n projekti, jonka tarkoitus on tuoda erilaisiin Discord chatteihin uusia ominaisuuksia ja parantaa mm. keskustelukanavien hallintaa. Projektin uusimman stabiilin version löytää osoitteesta https://github.com/Qurred/Kurre-Bot')
+      .setFooter('Lisää voi kysyä kehittäjältä');
+      msg.channel.sendEmbed(res);
   }
 });
 
