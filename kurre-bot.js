@@ -18,7 +18,7 @@ var komennot = [
   '!komennot - mitä luulet tämän olevan?'
 ];
 
-client.on('ready', () => {
+client.once('ready', () => {
   console.log('Currently running version: ' + config.version);
   console.log('Bot\'s home server is ' + config.home_server.name);
   console.log(`Logged in as ${client.user.username}!`);
@@ -40,8 +40,27 @@ client.on('ready', () => {
         }
         members.guilds[guild_id]=guild_members;
     }
-     var osu = require('./addons/osu.js')(client, members.guilds);
+    var osu = require('./addons/osu.js')(client, members.guilds);
+    var info = require('./addons/kurre.js')(client);
     console.log('Settings done');
+    client.user.setGame('Käpyjen sota 3');
+});
+
+client.on('presenceUpdate', (oldMember,newMember) =>{
+  if(oldMember.presence.status ==='offline' && newMember.presence.status !=='offline'){
+    var hour = new Date().getHours();
+    if(hour <= 11 && hour > 6){
+      oldMember.guild.defaultChannel.sendMessage('Huomenta <@'+oldMember.id+'> :sleeping:  ')
+    }else if (hour <= 15 && hour > 11) {
+      oldMember.guild.defaultChannel.sendMessage('Päivää <@'+oldMember.id+'> :hugging:  ')
+    }else if (hour <= 18 && hour > 15) {
+      oldMember.guild.defaultChannel.sendMessage('Iltapäivää <@'+oldMember.id+'> :hugging:  ')
+    }else if (hour <= 22 && hour > 18) {
+      oldMember.guild.defaultChannel.sendMessage('Iltaa <@'+oldMember.id+'> :sleeping:  ')
+    }else if (hour <= 6 && hour > 22) {
+      oldMember.guild.defaultChannel.sendMessage('Yötä <@'+oldMember.id+'> :sleeping:  ')
+    }
+  }
 });
 
 client.on('message', msg => {
@@ -69,21 +88,6 @@ client.on('message', msg => {
     }
   }else if(message[0] === '!datat' && msg.author.id === config.owner_id){
     msg.channel.sendMessage(JSON.stringify(members.guilds));
-  }else if(message[0]+" "+message[1] === '!Kurre-bot kehitys'){
-    var res = new discord.RichEmbed()
-    .setTitle('Kurre-bot v.' +config.version)
-    .setDescription('Kurre-bot on jatkuvan kehityksen alla joten uusia ominaisuuksia voi tulla nopeaa tahtia, mutta niiden vakautta ei taata ennen kunnollista korjaamista ja koodin optimointia')
-    .addField('Optimointi', 'Kurre-bot pohjautuu Node.js ja Discord.js paketteihin. Qurredin kirjoittama koodi on luotu nopeasti PoC idealla. Tästä johtuen ohjelman suoritus on raskasta ja eritoten !osu komennot kuluttavat tehoa runsaasti')
-    .addField('!Osu','Osu!:n liittyvät komennot ovat kehitteillä vielä. Tällä hetkellä on vain mahdollista lisätä väliaikaisesti tunnus')
-    .addField('Tallennus', 'Jokainen sovellus tarvitsee jonkinlaisen tietokannan. Tällä hetkellä Kurre-bot hyödyntää koneen välimuistia tietojen tallentamiseen. Tästä johtuen jokainen uudelleen käynnistys botin osalta (ja muutokset) nollaavat kaikki tallennukset. Tämä lisää sovelluksen käynnistysaikaa ja heikentää käytettävyyttä. Kehittäjä ei ole päättänyt vielä kunnollista formaattia tallentamista varten, eikä täten kirjoita tallentavaa koodia koska uudelleen kirjoittaminen myöhemmässä vaiheessa osoittautuu helposti työlääksi ja logiikan uudelleen luomiseksi.')
-    .setFooter('Lisää voi kysyä kehittäjältä');
-    msg.channel.sendEmbed(res);
-  }else if (message[0] === '!Kurre-bot') {
-      var res = new discord.RichEmbed()
-      .setTitle('Kurre-bot v.' +config.version)
-      .setDescription('Kurre-bot on Juho \'Qurred\' K.n projekti, jonka tarkoitus on tuoda erilaisiin Discord chatteihin uusia ominaisuuksia ja parantaa mm. keskustelukanavien hallintaa. Projektin uusimman stabiilin version löytää osoitteesta https://github.com/Qurred/Kurre-Bot')
-      .setFooter('Lisää voi kysyä kehittäjältä');
-      msg.channel.sendEmbed(res);
   }
 });
 
