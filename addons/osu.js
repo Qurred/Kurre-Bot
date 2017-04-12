@@ -3,8 +3,8 @@ const discord = require('discord.js');
 var osu_config = require('./data/osu.json');
 
 module.exports = function(client, members){
-    var memberArray = members; //members.array();
-    client.on('message', msg => {
+  var memberArray = members; //members.array();
+  client.on('message', msg => {
     var message = msg.content;
     var osu_username;
     message = message.split(" ");
@@ -50,10 +50,10 @@ module.exports = function(client, members){
             .setColor(0xF999FF)
             .setThumbnail('https://a.ppy.sh/'+result['user_id'])
             .addField('Profiilin tiedot',result['username']+'\nTaso:\t' +
-             parseFloat(result['level']).toFixed(2) +
-             '\nPP:\t' + parseFloat(result['level']).toFixed(2) +
-             '\nTarkkuus:\t' + parseFloat(result['accuracy']).toFixed(2) +
-             ' %\nKotimaa:\t' + result['country'])
+            parseFloat(result['level']).toFixed(2) +
+            '\nPP:\t' + parseFloat(result['level']).toFixed(2) +
+            '\nTarkkuus:\t' + parseFloat(result['accuracy']).toFixed(2) +
+            ' %\nKotimaa:\t' + result['country'])
             .setFooter('Tämä kysely luotiin käyttämällä osu!:n tarjoamaa API:a (https://github.com/ppy/osu-api/wiki)');
             msg.author.sendEmbed(res);
           });

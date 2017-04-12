@@ -8,15 +8,18 @@ module.exports = function(client){
   client.on('message', msg => {
     if(msg.author.bot){return;}
     message = msg.content.split(" ");
-    if(message[0] === '!uusiPeli'){    
-      // if(message[1]){
-      //   var newGame = '';
-      //   for(var i = 1; i < message.length; i++){
-      //     newGame += message[i] = ' ';
-      //     console.log(message + " " + message[i]);
-      //   }
-      //   newGame.trim();
-        client.user.setGame(message[1]);
+    if(message[0] === '!uusiPeli'){
+      if(message[1]){
+        var q = '';
+        for(var i = 1; i < message.length-1; i++){
+          q  += message[i] + ' ';
+        }
+        q  += message[message.length-1];
+        client.user.setGame(q);msg.channel.sendMessage("Vaihdettiin peli: " + q );
+      }else {
+        client.user.setGame('Käpyjen sota 3');
+      }
+
     }
     else if(message[0] === '!kurre-bot'){
       if(message.length === 1){

@@ -28,40 +28,27 @@ client.once('ready', () => {
       var guild_id = guilds[i].id;
       members.guilds[guild_id] = {};
     }
-      var memArr = guilds[i].members.array();
-      var guild_members = {};
-      for(var j = 0; j < memArr.length; j++){
-         var member_datas = {};
-         member_datas['name'] =  memArr[j].displayName;
-         member_datas['last_online'] = "";
-         member_datas['osu_username'] = "";
-         member_datas['battle_name'] = "";
-         guild_members[memArr[j].id] = member_datas
-        }
-        members.guilds[guild_id]=guild_members;
+    var memArr = guilds[i].members.array();
+    var guild_members = {};
+    for(var j = 0; j < memArr.length; j++){
+      var member_datas = {};
+      member_datas['name'] =  memArr[j].displayName;
+      member_datas['last_online'] = "";
+      member_datas['osu_username'] = "";
+      member_datas['battle_name'] = "";
+      guild_members[memArr[j].id] = member_datas
     }
-    var osu = require('./addons/osu.js')(client, members.guilds);
-    var info = require('./addons/kurre.js')(client);
-    console.log('Settings done');
-    client.user.setGame('Käpyjen sota 3');
+    members.guilds[guild_id]=guild_members;
+  }
+  var osu = require('./addons/osu.js')(client, members.guilds);
+  var info = require('./addons/kurre.js')(client);
+  var spotify = require('./addons/spotify.js')(client);
+  var greet = require('./addons/greeting.js')(client);
+  console.log('Settings done');
+  client.user.setGame('Käpyjen sota 3');
 });
 
-client.on('presenceUpdate', (oldMember,newMember) =>{
-  if(oldMember.presence.status ==='offline' && newMember.presence.status !=='offline'){
-    var hour = new Date().getHours();
-    if(hour <= 11 && hour > 6){
-      oldMember.guild.defaultChannel.sendMessage('Huomenta <@'+oldMember.id+'> :sleeping:  ')
-    }else if (hour <= 15 && hour > 11) {
-      oldMember.guild.defaultChannel.sendMessage('Päivää <@'+oldMember.id+'> :hugging:  ')
-    }else if (hour <= 18 && hour > 15) {
-      oldMember.guild.defaultChannel.sendMessage('Iltapäivää <@'+oldMember.id+'> :hugging:  ')
-    }else if (hour <= 22 && hour > 18) {
-      oldMember.guild.defaultChannel.sendMessage('Iltaa <@'+oldMember.id+'> :sleeping:  ')
-    }else if (hour <= 6 && hour > 22) {
-      oldMember.guild.defaultChannel.sendMessage('Yötä <@'+oldMember.id+'> :sleeping:  ')
-    }
-  }
-});
+
 
 client.on('message', msg => {
   var message = msg.content;
@@ -69,7 +56,7 @@ client.on('message', msg => {
   if(message[0] === '!komennot'){
     var res = "Botti tuntee tällä hetkellä seuraavat komennot:";
     for(var i = 0; i < komennot.length; i++){
-          res +="```" + komennot[i] + "```";
+      res +="```" + komennot[i] + "```";
     }
     msg.channel.sendMessage(res);
   }else if(message[0] === '!roskiin'){

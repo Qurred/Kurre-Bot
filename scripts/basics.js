@@ -24,7 +24,7 @@ module.exports = function(client){
       msg.channel.sendMessage(tmp);
     }
     else if(message[0] === '!kiima'){
-        msg.reply('Mee roskiin!');
+      msg.reply('Mee roskiin!');
     }
     else if(message[0] === '!pelaajat'){
       var res = "Pelaajia ovat: "
