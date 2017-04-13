@@ -18,10 +18,13 @@ module.exports = function (client) {
         inList = true;
         var current_Time = new Date().getTime();
         if((current_Time-users[i].time) > waitTime){
+          console.log("Aika kulunut, voidaan tehdä tervehdys @" + users[i].name);
           users[i].time = current_Time;
           userIndex = i;
         }
-        else{return;}
+        else{
+          console.log(((current_Time - users[i].time)/1000/60)+ users[i].name);
+          return;}
       }//if
     }//for
 
@@ -29,7 +32,8 @@ module.exports = function (client) {
     if(!inList){
       users.push({
         id: newMember.id,
-        time: new Date().getTime()
+        time: new Date().getTime(),
+        name: newMember.user.username
       });
       userIndex = users.length-1;
     }
