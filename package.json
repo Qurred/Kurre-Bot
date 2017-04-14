@@ -1,9 +1,9 @@
 {
   "name": "Kurre-bot",
-  "version": "0.0.3",
+  "version": "0.8.6",
   "private": true,
   "scripts": {
-    "start": "nodemon Kurre-bot.js"
+    "start": "nodemon kurre-bot.js"
   },
   "dependencies": {
     "discord.js": "^11.0.0"

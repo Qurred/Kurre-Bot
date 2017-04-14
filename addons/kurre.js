@@ -1,6 +1,6 @@
 const discord = require('discord.js');
 var fs = require('fs');
-var info = JSON.parse(fs.readFileSync('./addons/data/kurre.json', 'utf8'));//require('./data/kurre.json');
+var info = JSON.parse(fs.readFileSync('./addons/data/kurre.json', 'utf8'));
 
 
 
@@ -17,7 +17,7 @@ module.exports = function(client){
         q  += message[message.length-1];
         client.user.setGame(q);msg.channel.sendMessage("Vaihdettiin peli: " + q );
       }else {
-        client.user.setGame('Käpyjen sota 3');
+        client.user.setGame(null);
       }
 
     }
@@ -47,7 +47,7 @@ module.exports = function(client){
           }
           newInfo.field.trim();
           info.development.push(newInfo);
-          fs.writeFile('./addons/data/kurre.json', JSON.stringify(info), 'utf8', function (err, data) {
+          fs.writeFile('./addons/data/kurre.json', JSON.stringify(info, null, ' '), 'utf8', function (err, data) {
             msg.channel.sendMessage('Lisättiin onnistuneesti');
           });
         }else{

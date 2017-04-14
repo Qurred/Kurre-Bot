@@ -3,38 +3,21 @@ const discord = require('discord.js');
 var osu_config = require('./data/osu.json');
 
 module.exports = function(client, members){
-  var memberArray = members; //members.array();
   client.on('message', msg => {
     var message = msg.content;
-    var osu_username;
     message = message.split(" ");
-
     if(message[0] === '!osu'){
       msg.channel.sendMessage('osu! is a freeware rhythm game developed by Dean "peppy" Herbert');
     }
     else if (message[0] === '!osuAdd') {
-      if(message.length > 1){
-        for(var guild_id in memberArray){
-          if(!memberArray.hasOwnProperty(guild_id)) continue;
-          if(memberArray[guild_id][msg.author.id]){
-            osu_username = message[1];
-            memberArray[guild_id][msg.author.id].osu_username = osu_username;
-            break;
-          }
-        }
-      }else{
-        msg.author.sendMessage('Lisätäksesi itsellesi osu_username:n ole hyvä ja käytä komentoa: \'!osuAdd');
-        for(var i = 0; i < memberArray.length; i++){
-          if(memberArray[guild_id][msg.author.id]){
-            osu_username = memberArray[guild_id][msg.author.id].osu_username;
-            break;
-          }
-        }
+      if(message.length < 1){
+        msg.author.sendMessage('Lisätäksesi itsellesi osu_username:n ole hyvä ja käytä komentoa: \'!osuAdd nimimerkki');
+        return;
       }
-      if(osu_username){
+      if(message[1]){
         var options = {
           host: 'osu.ppy.sh',
-          path: '/api/get_user?u='+ osu_username + '&k=' + osu_config.api
+          path: '/api/get_user?u='+ message[1] + '&k=' + osu_config.api
         };
         callback = function(response) {
           var str = '';
@@ -44,6 +27,11 @@ module.exports = function(client, members){
           response.on('end', function () {
             var result = JSON.parse(str);
             result = result[0];
+            var osuProfile = {
+              id: result.user_id,
+              username:result.username,
+              thumbnail:"https://a.ppy.sh/"+result.user_id
+            };
             var res = new discord.RichEmbed()
             .setTitle('osu! profiili')
             .setDescription('Antamasi nimimerkin avulla löydettiin seuraava profiili\nTämä profiili liitetään tunnukseesi <@' + msg.author.id + '>')
@@ -56,6 +44,7 @@ module.exports = function(client, members){
             ' %\nKotimaa:\t' + result['country'])
             .setFooter('Tämä kysely luotiin käyttämällä osu!:n tarjoamaa API:a (https://github.com/ppy/osu-api/wiki)');
             msg.author.sendEmbed(res);
+            members[msg.author.id].osu = osuProfile;
           });
         }
         http.request(options, callback).end();

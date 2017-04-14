@@ -1,11 +1,17 @@
 var users = [];
 var waitTime = 3600000;
-module.exports = function (client) {
+module.exports = function (client,members) {
 
   client.on('presenceUpdate', (oldMember,newMember) =>{
+    //Updates last_online property
+    if(newMember.presence.status ==='offline'){
+      var time = new Date;
+      time = time.getTime();
+      members[newMember.id].last_online = time;
+    }
 
     //checks if user old state was offlie
-    if(oldMember.presence.status !=='offline' || newMember.presence.status !=='online'){
+    else if(oldMember.presence.status !=='offline' || newMember.presence.status !=='online'){
       return;
     }
 

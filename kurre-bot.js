@@ -1,67 +1,50 @@
 const discord = require('discord.js');
 var client = new discord.Client();
+var fs = require('fs');
 //scripts
 var basics = require('./scripts/basics.js')(client);
 //Jsons
 var config = require('./data/config.json');
 var comments = require('./addons/data/comments.json');
-var members = require('./addons/data/members.json');
-
-
-var komennot = [
-  '!ping - palauttaa pong, enimmäkseen testaamista varten',
-  '!bilis - luo uuden biljardipelin (2v2)',
-  '!kiima - komento jonka niki toivoi, en tiedä miksi',
-  '!pelaajat - palauttaa pelaajat',
-  '!uusiPelaaja [nimi] - lisää uuden pelaajan',
-  '!help - auttaa casuaaleja',
-  '!komennot - mitä luulet tämän olevan?'
-];
+//var members = require('./addons/data/members.json');
+var members;
 
 client.once('ready', () => {
   console.log('Currently running version: ' + config.version);
   console.log('Bot\'s home server is ' + config.home_server.name);
   console.log(`Logged in as ${client.user.username}!`);
-  var guilds = client.guilds.array();
-  for(var i = 0; i < guilds.length;i++){
-    if(!guilds[guilds[i].id]){
-      var guild_id = guilds[i].id;
-      members.guilds[guild_id] = {};
-    }
-    var memArr = guilds[i].members.array();
-    var guild_members = {};
-    for(var j = 0; j < memArr.length; j++){
-      var member_datas = {};
-      member_datas['name'] =  memArr[j].displayName;
-      member_datas['last_online'] = "";
-      member_datas['osu_username'] = "";
-      member_datas['battle_name'] = "";
-      guild_members[memArr[j].id] = member_datas
-    }
-    members.guilds[guild_id]=guild_members;
-  }
-  var osu = require('./addons/osu.js')(client, members.guilds);
+  initMembers();
+  var osu = require('./addons/osu.js')(client, members);
   var info = require('./addons/kurre.js')(client);
   var spotify = require('./addons/spotify.js')(client);
-  var greet = require('./addons/greeting.js')(client);
+  var greet = require('./addons/greeting.js')(client, members);
   console.log('Settings done');
-  client.user.setGame('Käpyjen sota 3');
+  client.user.setGame('Under Maintance');
 });
 
+client.on('disconnect', msg => {
+  console.log(msg);
+});
 
+client.on('error', err =>{
+  console.log('ERROR');
+  console.log(err);
+});
+
+client.on('reconnecting', () =>{console.log('Trying to reconnect');});
 
 client.on('message', msg => {
+  if(!msg.content.startsWith(config.symbol)){return;}
   var message = msg.content;
   message = message.split(" ");
-  if(message[0] === '!komennot'){
-    var res = "Botti tuntee tällä hetkellä seuraavat komennot:";
-    for(var i = 0; i < komennot.length; i++){
-      res +="```" + komennot[i] + "```";
-    }
-    msg.channel.sendMessage(res);
-  }else if(message[0] === '!roskiin'){
+  if(message[0] === '!roskiin'){
     msg.channel.sendMessage('Hei hei :sunglasses: ');
-    setTimeout(function(){process.exit(0)}, 1500);
+    fs.writeFile('./data/users.json', JSON.stringify(members, null, ' '), 'utf8', function (err, data) {
+      if(err){
+        console.log(err);
+      }
+      setTimeout(function(){process.exit(0)}, 1500);
+    });
   }else if(message[0] === '!lainaus'){
     if(msg.guild){
       var commenter = msg.guild.members.get(comments.comments[0].commenter.id);
@@ -74,8 +57,51 @@ client.on('message', msg => {
       msg.channel.sendEmbed(res);
     }
   }else if(message[0] === '!datat' && msg.author.id === config.owner_id){
-    msg.channel.sendMessage(JSON.stringify(members.guilds));
+    msg.channel.sendMessage(JSON.stringify(members, null, "    "));
+  }else if(message[0] === '!myInfo'){
+    msg.author.sendMessage(JSON.stringify(members[msg.author.id], null, "    "));
   }
 });
 
 client.login(config.token);
+
+function initMembers() {
+  try{
+    members = JSON.parse(fs.readFileSync('./data/users.json', 'utf8'));
+  }catch(err){console.log("Ei onnistuttu lataamaan");}
+  var guilds = client.guilds.array();
+  if(!members){
+    members = {};
+  }
+  for(let i = 0; i < guilds.length; i++){
+    var guild_users = guilds[i].members.array();
+    for (let j = 0; j < guild_users.length; j++) {
+      var guid = guild_users[j].id
+      if(!members[guid]){
+        var user_data = {
+          id: guid,
+          name: guild_users[j].user.username,
+          guilds:[guilds[i].id],
+          osu:null,
+          last_online:null
+        };
+        members[guid] = user_data;
+      }else{
+        var found = false;
+        for (var z = 0; z < members[guid].guilds.length; z++) {
+          if(members[guid].guilds[z] === guilds[i].id){
+            found = true;
+          }
+        }
+        if(!found){
+          members[guid].guilds.push(guilds[i].id);
+        }
+      }
+    }
+  }
+  fs.writeFile('./data/users.json', JSON.stringify(members, null, ' '), 'utf8', function (err, data) {
+    if(err){
+      console.log(err);
+    }
+  });
+}

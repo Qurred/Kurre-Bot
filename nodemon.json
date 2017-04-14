@@ -1,4 +1,4 @@
 {
-  "verbose": true,
-  "ignore": ["./addons/data/*.json"]
+  "verbose": false,
+  "ignore": ["*.json"]
 }
