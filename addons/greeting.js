@@ -1,5 +1,4 @@
 var users = [];
-var waitTime = 3600000;
 module.exports = function (client,members) {
 
   client.on('presenceUpdate', (oldMember,newMember) =>{
@@ -9,12 +8,12 @@ module.exports = function (client,members) {
       time = time.getTime();
       members[newMember.id].last_online = time;
     }
-
+    console.log('\x1b[32mUser\'s presence changed', '\x1b[0m '+ oldMember.user.username+': '+ oldMember.presence.status+' -> '+ newMember.presence.status);
     //checks if user old state was offlie
-    else if(oldMember.presence.status !=='offline' || newMember.presence.status !=='online'){
+    if(oldMember.presence.status !=='offline' || (newMember.presence.status !=='online'&&newMember.presence.status !== 'idle')){
       return;
     }
-
+    var waitTime = members[newMember.id].greeting_th;
     var userIndex;
     var inList = false;
 
@@ -24,12 +23,12 @@ module.exports = function (client,members) {
         inList = true;
         var current_Time = new Date().getTime();
         if((current_Time-users[i].time) > waitTime){
-          console.log("Aika kulunut, voidaan tehdä tervehdys @" + users[i].name);
+//          console.log("Aika kulunut, voidaan tehdä tervehdys @" + users[i].name);
           users[i].time = current_Time;
           userIndex = i;
         }
         else{
-          console.log(((current_Time - users[i].time)/1000/60)+ users[i].name);
+//          console.log(((current_Time - users[i].time)/1000/60)+ users[i].name);
           return;}
       }//if
     }//for
