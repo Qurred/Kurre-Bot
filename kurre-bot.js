@@ -6,9 +6,8 @@ var basics = require('./scripts/basics.js')(client);
 //Jsons
 var config = require('./data/config.json');
 var comments = require('./addons/data/comments.json');
-
 var members;
-
+var tries = 0;
 client.once('ready', () => {
   console.log('Currently running version: ' + config.version);
   console.log('Bot\'s home server is ' + config.home_server.name);
@@ -18,19 +17,19 @@ client.once('ready', () => {
   var info = require('./addons/kurre.js')(client);
   var spotify = require('./addons/spotify.js')(client);
   var greet = require('./addons/greeting.js')(client, members);
+  client.user.setGame('Kantai Collection');
   console.log('Settings done');
-  client.user.setGame('Under Maintance');
 });
 
 client.on('disconnect', msg => {
-  console.log('disconnected... Trying to reconnect');
+  console.log(msg);
   fs.writeFile('./data/users.json', JSON.stringify(members, null, ' '), 'utf8', function (err, data) {
     if(err){
       console.log(err);
     }
     setTimeout(function(){
-      console.log("Saved files, now trying to reconnect");
-      client.login(config.token);
+      console.log('ERROR','Shutting down the bot to prevent multiple request to discord');
+      process.exit(0);
     }, 10000);
   });
 
@@ -41,9 +40,17 @@ client.on('error', err =>{
   client.destroy().then(() =>{client.login(config.token);});
 });
 
-// client.on('reconnecting', () =>{
-//   console.log('Trying to reconnect');
-// });
+
+
+client.on('reconnecting', () =>{
+   if(tries === 0){
+      console.log('DiscordJS','Trying to reconnect, maybe old instanse is still ghosting?');
+      tries++;
+   }else{
+      console.log('DiscordJS','Trying to reconnect.... ' + tries++);
+   }
+   
+});
 
 client.on('message', msg => {
   if(!msg.content.startsWith(config.symbol)){return;}
@@ -77,7 +84,9 @@ client.on('message', msg => {
   }
 });
 
-client.login(config.token);
+client.login(config.token).catch(err => {
+  console.log('Discord.js Error', 'Incorrect Login details');
+});
 
 function initMembers() {
   try{
@@ -85,6 +94,7 @@ function initMembers() {
   }catch(err){console.log("/data/users.json missing");}
   var guilds = client.guilds.array();
   if(!members){
+    console.log('INIT','Didn\'t find users.json');
     members = {};
   }
   for(let i = 0; i < guilds.length; i++){

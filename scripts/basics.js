@@ -21,6 +21,7 @@ module.exports = function(client){
           tmp+= " vs ";
         }
       }
+      console.log(tmp);
       msg.channel.sendMessage(tmp);
     }
     else if(message[0] === '!kiima'){

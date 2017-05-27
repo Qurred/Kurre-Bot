@@ -44,16 +44,20 @@ module.exports = function (client,members) {
     }
     //Greeting
     var hour = new Date().getHours();
-    if(hour <= 11 && hour > 6){
-      oldMember.guild.defaultChannel.sendMessage('Huomenta <@'+oldMember.id+'> :sleeping:  ')
-    }else if (hour <= 15 && hour > 11) {
-      oldMember.guild.defaultChannel.sendMessage('Päivää <@'+oldMember.id+'> :hugging:  ')
-    }else if (hour <= 18 && hour > 15) {
-      oldMember.guild.defaultChannel.sendMessage('Iltapäivää <@'+oldMember.id+'> :hugging:  ')
-    }else if (hour <= 22 && hour > 18) {
-      oldMember.guild.defaultChannel.sendMessage('Iltaa <@'+oldMember.id+'> :sleeping:  ')
-    }else{
-      oldMember.guild.defaultChannel.sendMessage('Yötä <@'+oldMember.id+'> :sleeping:  ')
+    var msg_opt = {
+      tts: true
     }
+    if(hour <= 11 && hour > 6){
+      oldMember.guild.defaultChannel.sendMessage('Huomenta <@'+oldMember.id+'> :sleeping:  ',msg_opt)
+    }else if (hour <= 15 && hour > 11) {
+      oldMember.guild.defaultChannel.sendMessage('Päivää <@'+oldMember.id+'> :hugging:  ',msg_opt)
+    }else if (hour <= 18 && hour > 15) {
+      oldMember.guild.defaultChannel.sendMessage('Iltapäivää <@'+oldMember.id+'> :hugging:  ',msg_opt)
+    }else if (hour <= 22 && hour > 18) {
+      oldMember.guild.defaultChannel.sendMessage('Iltaa <@'+oldMember.id+'> :sleeping:  ',msg_opt)
+    }else{
+      oldMember.guild.defaultChannel.sendMessage('Yötä <@'+oldMember.id+'> :sleeping:  ',msg_opt)
+    }
+    console.log('Lähetettiin');
   });
 };
