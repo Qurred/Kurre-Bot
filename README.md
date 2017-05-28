@@ -6,4 +6,5 @@ Kurre-bot is currently able to save used data to multiple different JSON files.
 
 Things to do:
 - Clean up the code
-- 
+- Refactor code
+    - add more stuff to the client variable

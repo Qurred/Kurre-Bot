@@ -1,5 +1,5 @@
 var users = [];
-module.exports = function (client,members) {
+module.exports  = function (client,members) {
 
   client.on('presenceUpdate', (oldMember,newMember) =>{
     //Updates last_online property
@@ -60,4 +60,8 @@ module.exports = function (client,members) {
     }
     console.log('Lähetettiin');
   });
+
 };
+exports.help = {
+    "help":     ''
+}

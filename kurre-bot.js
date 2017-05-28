@@ -1,9 +1,11 @@
 const discord = require('discord.js');
 var client = new discord.Client();
+var exports = [];
 var fs = require('fs');
 //scripts
 var basics = require('./scripts/basics.js')(client);
 //Jsons
+var addons = require('./data/addons.json');
 var config = require('./data/config.json');
 var comments = require('./addons/data/comments.json');
 var members;
@@ -13,11 +15,14 @@ client.once('ready', () => {
   console.log('Bot\'s home server is ' + config.home_server.name);
   console.log(`Logged in as ${client.user.username}!`);
   initMembers();
-  var osu = require('./addons/osu.js')(client, members);
-  var info = require('./addons/kurre.js')(client);
-  var spotify = require('./addons/spotify.js')(client);
-  var greet = require('./addons/greeting.js')(client, members);
-  client.user.setGame('Kantai Collection');
+  if(!addons || addons.items.length == 0){
+    console.log('DiscordJS','No addons added to Kurre-Bot');
+  }else{
+    for (var i = 0; i < addons.items.length; i++) {
+      exports.push(require(addons.items[i].route)(client,members));
+    }
+  }
+  client.user.setGame(config.game);
   console.log('Settings done');
 });
 
@@ -32,7 +37,6 @@ client.on('disconnect', msg => {
       process.exit(0);
     }, 10000);
   });
-
 });
 
 client.on('error', err =>{
@@ -65,6 +69,17 @@ client.on('message', msg => {
       }
       setTimeout(function(){process.exit(0)}, 1500);
     });
+  }
+  else if(message[0] === '!help'){
+    let manual = "Kurre-bot knows currently following commands:\n";
+    for(let i = 0; i < addons.items.length; i++){
+      const addonData = require(addons.items[i].route);
+      console.log(addonData.help);
+      //manual += exports[i].help;
+    }
+
+
+
   }else if(message[0] === '!lainaus'){
     if(msg.guild){
       va
