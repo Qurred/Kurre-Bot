@@ -1,6 +1,5 @@
 var request = require('request');
 const discord = require('discord.js');
-
 var spotify_hex = '1ED760';
 
 module.exports  = function(client){
@@ -38,8 +37,8 @@ module.exports  = function(client){
   }
 );
 
+  //Band and song
   function getTrack(band, _song, msg){
-    console.log('https://api.spotify.com/v1/search?q=' + band + "%20"+_song+'&type=track');
     request('https://api.spotify.com/v1/search?q=' + band +"%20"+_song+'&type=track', function (err, res, body) {
       if(err || res.statusCode !== 200){
           console.log('Spotify API', res.statusCode);
@@ -58,13 +57,19 @@ module.exports  = function(client){
         '\nArtisti:\t['+ song.artists[0].name+']('+song.artists[0].external_urls.spotify+')' + 
         '\nAlbumi:\t[' +song.album.name+']('+song.album.external_urls.spotify+')'+
         '\nBiisin nimi:\t['+song.name+']('+song.external_urls.spotify+')'+
-        '\n\n[Biisin esikatselu]('+song.preview_url+')')
+        (song.preview_url?
+        '\n[Biisin esikatselu]('+song.preview_url+')' : 
+        '\nBiisistä '+ song.name +' ei ole esikatselua käytettävissä'))
         .setColor(spotify_hex)
         .setThumbnail((song.album.images[0])?song.album.images[0].url : null);
-         msg.channel.sendEmbed(res);
+         msg.channel.send("",{
+           embed:res
+         });
+         return;
     });
   }
 
+  //Just the band
   function getArtist(band, msg){
       request('https://api.spotify.com/v1/search?q=' + band + '&type=artist', function (err, res, body) {
         if(err || res.statusCode !== 200){
@@ -79,16 +84,55 @@ module.exports  = function(client){
           msg.author.send("Haku " + band +  " ei tuottanut tuloksia");
           return;
         }
-        var res = new discord.RichEmbed()
-            .setTitle('Spotify API')
-            .setDescription('Search \"' + band + '\" resolted into the following band')
-            .setColor(spotify_hex)
-            .addField(artist.name, artist.external_urls.spotify)
-            .setThumbnail((artist.images[0])?artist.images[0].url : null);
-        msg.channel.sendEmbed(res);
-        return;
+        var genres = artist.genres.join(", ");
+        getAlbums(artist.id, (albums) => {
+          var albumList = [];
+          for(let i = 0; i < albums.length; i++){
+            albumList.push(
+              '**[' + albums[i].name+']('+albums[i].url+')**'
+            );
+          }
+          var res = new discord.RichEmbed()
+              .setTitle('Spotify API')
+              .setDescription(
+              '**['+artist.name+']('+artist.external_urls.spotify+')**'+
+              '\nGenret: '+ genres)
+              .setColor(spotify_hex)
+              .addField('Levyt',albumList.join('\n'))
+              .setThumbnail((artist.images[0])?artist.images[0].url : null);
+          msg.channel.send("",{embed:res});
+          return;
+        });
+
       });
   }
+
+  function getAlbums(artist_id, callback){
+    request('https://api.spotify.com/v1/artists/' + artist_id + '/albums?offset=0&limit=20&album_type=single,album', function (err, res, body) {
+      if(err || res.statusCode !== 200){
+        console.log('Spotify API', res.statusCode);
+        console.log('Spotify API','Error' );
+        return;
+      }
+      let albums = [];
+      var rs = JSON.parse(body).items;
+      albumLoop:
+      for(let i = 0; i < rs.length; i++){
+        let newAlbum = {
+          name: rs[i].name,
+          url:rs[i].external_urls.spotify
+        }
+        for(let j = 0; j < albums.length; j++){
+          if(albums[j].name === newAlbum.name){
+            continue albumLoop;
+          }
+        }
+        albums.push(newAlbum);
+      }
+      callback(albums);
+    });
+  }
+
 }
 
 exports.help = {
