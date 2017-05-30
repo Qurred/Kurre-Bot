@@ -8,7 +8,7 @@ var basics = require('./scripts/basics.js')(client);
 var addons = require('./data/addons.json');
 var config = require('./data/config.json');
 var comments = require('./addons/data/comments.json');
-var members;
+var members = client.members;
 var tries = 0;
 client.once('ready', () => {
   console.log('Currently running version: ' + config.version);
@@ -47,13 +47,13 @@ client.on('error', err =>{
 
 
 client.on('reconnecting', () =>{
-   if(tries === 0){
-      console.log('DiscordJS','Trying to reconnect, maybe old instanse is still ghosting?');
-      tries++;
-   }else{
-      console.log('DiscordJS','Trying to reconnect.... ' + tries++);
-   }
-   
+  if(tries === 0){
+    console.log('DiscordJS','Trying to reconnect, maybe old instanse is still ghosting?');
+    tries++;
+  }else{
+    console.log('DiscordJS','Trying to reconnect.... ' + tries++);
+  }
+
 });
 
 client.on('message', msg => {
@@ -165,7 +165,7 @@ function givePersonData(_author){
     //Everything is fine
   })
   .catch(function(){
-    //Error, send message about it to the asker. 
+    //Error, send message about it to the asker.
     //TODO create log about errors
     _author.sendMessage('Error... Has occupied, please contact Kurre-bot\'s creator');
   });

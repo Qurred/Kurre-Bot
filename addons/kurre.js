@@ -58,8 +58,8 @@ module.exports = function(client){
   });
 };
 exports.help = {
-    "help":     'Spotify commands:\n```' +
-                'Search for band: "!spotify [band name]" e.g. !spotify Disturbed\n'+
-                'Search for track: "!spotify [band name] | [song name]" e.g. !spotify Disturbed | The Sound Of Silence'
-                +'```'
-  }
+  "help":     'Spotify commands:\n```' +
+  'Search for band: "!spotify [band name]" e.g. !spotify Disturbed\n'+
+  'Search for track: "!spotify [band name] | [song name]" e.g. !spotify Disturbed | The Sound Of Silence'
+  +'```'
+}

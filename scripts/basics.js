@@ -43,7 +43,7 @@ module.exports = function(client){
       }
     }
     else if(message[0] === '!help'){
-    //  msg.channel.sendMessage('https://www.youtube.com/watch?v=6B7-tMh9zyI');
+      //  msg.channel.sendMessage('https://www.youtube.com/watch?v=6B7-tMh9zyI');
     }
   });
 };
