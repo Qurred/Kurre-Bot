@@ -1,16 +1,27 @@
 var request = require('request');
-var config = require('./data/spotify.json');
+var config = require('../data/spotify.json');
 var fs = require('fs');
 const discord = require('discord.js');
 var spotify_hex = '1ED760';
 
-module.exports  = function(client){
-  client.on('message', msg => {
+exports.run  = function(client,msg){
     var message = msg.content.toLowerCase();
     var splitter = message.indexOf('|');
     //Checks if multiple args
     if(splitter === -1){//Only band name
       message = message.split(" ");
+      if(message.length == 1 ){
+        var res = new discord.RichEmbed()
+        .setTitle('Spotify API')
+        .setDescription(`To use Spotify api via Kurre-bot you need to use one of the following commands\n`+
+          `To search for a band use: "!spotify [band name]\n`+
+          `To search for a track use: "!spotify [band name] | [track name]`)
+        .setColor(spotify_hex);
+        msg.channel.send("",{
+            embed:res
+        });
+        return;
+        }
       if(message[0] === '!spotify'){
         var q = '';
         for(var i = 1; i < message.length-1; i++){
@@ -37,8 +48,8 @@ module.exports  = function(client){
       song  += tmp[tmp.length-1];
       checkToken(getTrack(band, song, msg));
     }
-  }
-);
+  };
+//);
 
 //Band and song
 function getTrack(band, _song, msg){
@@ -80,7 +91,6 @@ function getTrack(band, _song, msg){
 
   //Just the band
   function getArtist(band, msg){
-    console.log(band)
     request.get(
       {url:`https://api.spotify.com/v1/search?q=${band}&type=artist`,
       headers:{
@@ -104,7 +114,7 @@ function getTrack(band, _song, msg){
         var albumList = [];
         for(let i = 0; i < albums.length; i++){
           albumList.push(
-            `**[${albums[i].name}](${albums[i].url})**'`
+            `**[${albums[i].name}](${albums[i].url})**`
           );
         }
         while(albumList.join('\n').length >=1024){
@@ -179,18 +189,18 @@ function getTrack(band, _song, msg){
         config.timestamp = timestamp;
         fs.writeFile('./addons/data/spotify.json', JSON.stringify(config, null, ' '), 'utf8', function (err, data) {
         if(err) console.log(err);
-        _callback;  
-      });
+        callback;  
+        });
       }
     );
   }else{
     return;
   }
  } 
-}
-  exports.help = {
-    "help":     'Spotify commands:\n```' +
-    'Search for band: "!spotify [band name]" e.g. !spotify Disturbed\n'+
-    'Search for track: "!spotify [band name] | [song name]" e.g. !spotify Disturbed | The Sound Of Silence'
-    +'```'
-  }
+// }
+  // exports.help = {
+  //   "help":     'Spotify commands:\n```' +
+  //   'Search for band: "!spotify [band name]" e.g. !spotify Disturbed\n'+
+  //   'Search for track: "!spotify [band name] | [song name]" e.g. !spotify Disturbed | The Sound Of Silence'
+  //   +'```'
+  // }

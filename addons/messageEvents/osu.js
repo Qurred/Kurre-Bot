@@ -2,8 +2,8 @@ var http = require('http');
 const discord = require('discord.js');
 var osu_config = require('./data/osu.json');
 
-module.exports = function(client, members){
-  client.on('message', msg => {
+exports.run = function(client,msg){
+    console.log('osu!')
     var message = msg.content;
     message = message.split(" ");
     if(message[0] === '!osu'){
@@ -50,7 +50,6 @@ module.exports = function(client, members){
         http.request(options, callback).end();
       }
     }
-  });
 };
 exports.help = {
   "help":     'Spotify commands:\n```' +
