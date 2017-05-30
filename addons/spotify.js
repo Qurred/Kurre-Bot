@@ -47,21 +47,22 @@ function getTrack(band, _song, msg){
     headers:{
       'Content-Type':'application/x-www-form-urlencoded',
       Authorization:`${config.token_type} ${config.token}`
-  }
-}, function (err, res, body) {
-    if(err || res.statusCode !== 200){
+    }
+  },
+ function (err, res, body) {//callback function
+    if(err || res.statusCode !== 200){ //Checks if errors or code is not 200
       console.log('Spotify API GET TRACK', res.statusCode);
       return;
     }
-    var rbody = JSON.parse(body);
-    var song = rbody.tracks.items[0];
+    var tracks = JSON.parse(body).tracks;
+    var song = tracks.items[0];
     if(!song){
-      msg.author.send("Haku " + band + " "+ _song +  " ei tuottanut tuloksia");
+      msg.author.send(`Search  "${band} ${_song}" failed, please check writen parameters`);
       return;
     }
     var res = new discord.RichEmbed()
     .setTitle('Spotify API')
-    .setDescription('Löydettiin ' + rbody.tracks.items.length + ' biisiä ja valittiin ensimmäinen:'+
+    .setDescription('Löydettiin ' + tracks.items.length + ' biisiä ja valittiin ensimmäinen:'+
     '\nArtisti:\t['+ song.artists[0].name+']('+song.artists[0].external_urls.spotify+')' +
     '\nAlbumi:\t[' +song.album.name+']('+song.album.external_urls.spotify+')'+
     '\nBiisin nimi:\t['+song.name+']('+song.external_urls.spotify+')'+
@@ -79,6 +80,7 @@ function getTrack(band, _song, msg){
 
   //Just the band
   function getArtist(band, msg){
+    console.log(band)
     request.get(
       {url:`https://api.spotify.com/v1/search?q=${band}&type=artist`,
       headers:{
@@ -102,7 +104,7 @@ function getTrack(band, _song, msg){
         var albumList = [];
         for(let i = 0; i < albums.length; i++){
           albumList.push(
-            '**[' + albums[i].name+']('+albums[i].url+')**'
+            `**[${albums[i].name}](${albums[i].url})**'`
           );
         }
         while(albumList.join('\n').length >=1024){
@@ -111,15 +113,13 @@ function getTrack(band, _song, msg){
         var res = new discord.RichEmbed()
         .setTitle('Spotify API')
         .setDescription(
-          '**['+artist.name+']('+artist.external_urls.spotify+')**'+
-          '\nGenret: '+ genres)
+          `**[${artist.name}](${artist.external_urls.spotify})**\nGenret: ${genres}`)
           .setColor(spotify_hex)
           .addField('Levyt',albumList.join('\n'))
           .setThumbnail((artist.images[0])?artist.images[0].url : null);
           msg.channel.send("",{embed:res});
           return;
         });
-
       });
     }
 
@@ -156,7 +156,7 @@ function getTrack(band, _song, msg){
 
    function checkToken(_callback){
      var callback = _callback;
-     if(!config.token || (config.expires_in < (new Date().getTime - config.ts) / 60)){
+     if(!config.token || (config.expires_in < (new Date().getTime() - config.ts))){
       let encoded = new Buffer(`${config.id}:${config.secret}`).toString('base64');
       let auth = `Basic ${encoded}`;
       request.post({

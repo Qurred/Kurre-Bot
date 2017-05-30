@@ -44,7 +44,23 @@ client.on('error', err =>{
   client.destroy().then(() =>{client.login(config.token);});
 });
 
+client.on('warn', err=>{
+  console.log('DiscordJS Warn', err);
+});
 
+client.on('guildMemberAdd', member =>{
+  console.log(`New Guild member joined: ${member.displayName}`);
+  var member_data = {
+          id: member.id,
+          name: member.user.username,
+          guilds:member.guild.id,
+          osu:null,
+          last_online:null,
+          greeting_th:3600000,
+          custom_message: null
+        };
+  members[member.id] = member_data;
+})
 
 client.on('reconnecting', () =>{
   if(tries === 0){
