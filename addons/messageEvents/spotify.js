@@ -164,39 +164,7 @@ exports.run  = function(client,msg){
         });
       }
 
-      function checkToken(_callback){
-        if(!config.token || (config.expires_in < (new Date().getTime() - config.timestamp)/1000)){
-          let encoded = new Buffer(`${config.id}:${config.secret}`).toString('base64');
-          let auth = `Basic ${encoded}`;
-          request.post({
-            url:'https://accounts.spotify.com/api/token?grant_type=client_credentials',
-            headers:{
-              'Content-Type':'application/x-www-form-urlencoded',
-              Authorization:auth
-            }
-          },
-          (err, res, body)=>{
-            if(err || res.statusCode !== 200){
-              console.log('Spotify API TOKEN', res.statusCode );
-              return;
-            }//if
-            var timestamp = new Date().getTime();
-            var response = JSON.parse(body);
-            config.token = response.access_token;
-            config.expires_in = response.expires_in;
-            config.token_type = response.token_type;
-            config.timestamp = timestamp;
-            fs.writeFile('./addons/data/spotify.json', JSON.stringify(config, null, ' '), 'utf8', function (err, data) {
-              if(err) console.log(err);
-              _callback();
-            });
-          }
-        );
-      }else{
-        _callback();
-        return;
-      }
-    }
+
 
 
     exports.info = {

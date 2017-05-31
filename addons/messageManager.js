@@ -1,5 +1,7 @@
 const config = require('../data/config.json');
 
+
+
 module.exports = function(msg,client){
   if(msg.author.bot) return; //Checks if message's author is a bot
   if(!msg.content.startsWith(config.symbol)) return; //Checks if message is a command
@@ -10,6 +12,7 @@ module.exports = function(msg,client){
     let func = require(`./messageEvents/${message}.js`);
     func.run(client,msg,params);
   }catch(err){
+    console.log(err);
     //We didnt find asked command, so what?
   }
 };
