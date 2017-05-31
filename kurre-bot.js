@@ -2,7 +2,7 @@ const discord = require('discord.js');
 var client = new discord.Client();
 var exports = [];
 var fs = require('fs');
-require('./addons/addonLoader')(client);
+
 //scripts
 //var basics = require('./scripts/basics.js')(client);
 //Jsons
@@ -10,7 +10,9 @@ var addons = require('./data/addons.json');
 var config = require('./data/config.json');
 var comments = require('./addons/data/comments.json');
 var members = client.members = {};
-var tries = 0;
+
+require('./addons/addonLoader')(client);
+
 
 client.on('disconnect', msg => {
   console.log(msg);
@@ -26,8 +28,8 @@ client.on('disconnect', msg => {
 });
 
 client.shutDown = function(){
-  console.log('CLIENT','Staring saving user informations and shutting down');
-    fs.writeFile('./data/users.json', JSON.stringify(members, null, ' '), 'utf8', function (err, data) {
+  console.log('CLIENT','Starting saving user informations and shutting down');
+    fs.writeFile('./addons/data/users.json', JSON.stringify(client.members, null, ' '), 'utf8', function (err, data) {
       if(err){
         console.log(err);
       }
@@ -44,69 +46,12 @@ client.on('warn', err=>{
   console.log('DiscordJS Warn', err);
 });
 
-// client.on('guildMemberAdd', member =>{
-//   console.log(`New Guild member joined: ${member.displayName}`);
-//   var member_data = {
-//           id: member.id,
-//           name: member.user.username,
-//           guilds:member.guild.id,
-//           osu:null,
-//           last_online:null,
-//           greeting_th:3600000,
-//           custom_message: null
-//         };
-//   members[member.id] = member_data;
-// })
-
-// client.on('message', msg => {
-//   if(!msg.content.startsWith(config.symbol)){return;}
-//   console.log('\x1b[31mCommand usage', '\x1b[0mUser '+msg.author.username+' ('+msg.author.id + ') used following command: ' + msg.content);
-//   var message = msg.content;
-//   message = message.split(" ");
-//   if(message[0] === '!roskiin'){
-//     msg.channel.sendMessage('Hei hei :sunglasses: ');
-//     fs.writeFile('./data/users.json', JSON.stringify(members, null, ' '), 'utf8', function (err, data) {
-//       if(err){
-//         console.log(err);
-//       }
-//       setTimeout(function(){process.exit(0)}, 1500);
-//     });
-//   }
-//   else if(message[0] === '!help'){
-//     let manual = "Kurre-bot knows currently following commands:\n";
-//     for(let i = 0; i < addons.items.length; i++){
-//       const addonData = require(addons.items[i].route);
-//       console.log(addonData.help);
-//       //manual += exports[i].help;
-//     }
-
-
-
-//   }else if(message[0] === '!lainaus'){
-//     if(msg.guild){
-//       va
-//       var commenter = msg.guild.members.get(comments.comments[Math.random(comments.comments.length)].commenter.id);
-//       var res = new discord.RichEmbed()
-//       .setTitle('Lainaus')
-//       .setAuthor(commenter.displayName, commenter.user.avatarURL)
-//       .setColor(0x00AE86)
-//       .setDescription(comments.comments[0].comment)
-//       .setFooter('Lisännyt ' + comments.comments[0].adder.username + ' ' + comments.comments[0].adder.date);
-//       msg.channel.sendEmbed(res);
-//     }
-//   }else if(message[0] === '!datat' && msg.author.id === config.owner_id){
-//     msg.channel.sendMessage(JSON.stringify(members, null, "    "));
-//   }else if(message[0] === '!myInfo'){
-//     givePersonData(msg.author);
-//   }
-// });
-
-client.login(config.token).catch(err => {
+client.login(config.token).then(() =>{
+  const init = require('./addons/initBot')(client);
+})
+.catch(err => {
   console.log('Discord.js Error', 'Incorrect Login details');
 });
-
-
-
 
 function givePersonData(_author){
   var asked_user = members[_author.id];

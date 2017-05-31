@@ -7,6 +7,7 @@ exports.run = (client, msg) => {
         }
         q  += message[message.length-1];
         client.user.setGame(q);
+        console.log(client.user);
         msg.channel.sendMessage("Changed game into: " + q );
     }else {
         client.user.setGame(null);

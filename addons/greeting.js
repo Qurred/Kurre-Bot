@@ -1,5 +1,4 @@
 var users = [];
-var index = 0;
 module.exports  = function(oldMember,newMember,client) {
     //Updates last_online property
     if(newMember.presence.status ==='offline'){
@@ -16,7 +15,6 @@ module.exports  = function(oldMember,newMember,client) {
     if(oldMember.presence.status !=='offline' || (newMember.presence.status !=='online'&&newMember.presence.status !== 'idle')){
       return;
     }
-    
     var waitTime = client.members[newMember.id].greeting_th;
     var userIndex;
     var inList = false;
@@ -35,6 +33,7 @@ module.exports  = function(oldMember,newMember,client) {
         }
         }//if
       }//for
+
       //user wasn't in a list, creating new
       if(!inList){
         users.push({
@@ -44,13 +43,14 @@ module.exports  = function(oldMember,newMember,client) {
         });
         userIndex = users.length-1;
       }
+
       //Greeting
       var hour = new Date().getHours();
       var msg_opt = {
         tts: false
       }
       if(hour <= 11 && hour > 6){
-        oldMember.guild.defaultChannel.sen('Huomenta <@'+oldMember.id+'> :sleeping:  ',msg_opt)
+        oldMember.guild.defaultChannel.send('Huomenta <@'+oldMember.id+'> :sleeping:  ',msg_opt)
       }else if (hour <= 15 && hour > 11) {
         oldMember.guild.defaultChannel.send('Päivää <@'+oldMember.id+'> :hugging:  ',msg_opt)
       }else if (hour <= 18 && hour > 15) {

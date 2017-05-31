@@ -8,7 +8,8 @@ module.exports = function(msg,client){
     console.log('\x1b[31mCommand usage', '\x1b[0mUser '+msg.author.username+' ('+msg.author.id + ') used following command: ' + msg.content);
     try{
         let func = require(`./messageEvents/${message}.js`);
-        console.log(func);
         func.run(client,msg,params);
-    }catch(err){console.log(err)}
+    }catch(err){
+        //We didnt find asked command, so what?
+    }
 };

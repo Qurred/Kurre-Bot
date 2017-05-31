@@ -1,6 +1,6 @@
 var http = require('http');
 const discord = require('discord.js');
-var osu_config = require('./data/osu.json');
+var osu_config = require('../data/osu.json');
 
 exports.run = function(client,msg){
     console.log('osu!')

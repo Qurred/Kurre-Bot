@@ -28,7 +28,7 @@ exports.run  = function(client,msg){
           q  += message[i] + '%20';
         }
         q  += message[message.length-1];
-        checkToken(getArtist(q,msg));
+        checkToken(() => getArtist(q,msg));
       }
     }
     else{//Band name and song name
@@ -46,7 +46,7 @@ exports.run  = function(client,msg){
         song += tmp[i] + '%20';
       }
       song  += tmp[tmp.length-1];
-      checkToken(getTrack(band, song, msg));
+      checkToken(() => getTrack(band, song, msg));
     }
   };
 //);
@@ -165,8 +165,8 @@ function getTrack(band, _song, msg){
     }
 
    function checkToken(_callback){
-     var callback = _callback;
-     if(!config.token || (config.expires_in < (new Date().getTime() - config.ts))){
+     console.log((new Date().getTime() - config.timestamp)/1000);
+     if(!config.token || (config.expires_in < (new Date().getTime() - config.timestamp)/1000)){
       let encoded = new Buffer(`${config.id}:${config.secret}`).toString('base64');
       let auth = `Basic ${encoded}`;
       request.post({
@@ -189,18 +189,19 @@ function getTrack(band, _song, msg){
         config.timestamp = timestamp;
         fs.writeFile('./addons/data/spotify.json', JSON.stringify(config, null, ' '), 'utf8', function (err, data) {
         if(err) console.log(err);
-        callback;  
+        _callback();  
         });
       }
     );
   }else{
+    _callback();  
     return;
   }
  } 
-// }
-  // exports.help = {
-  //   "help":     'Spotify commands:\n```' +
-  //   'Search for band: "!spotify [band name]" e.g. !spotify Disturbed\n'+
-  //   'Search for track: "!spotify [band name] | [song name]" e.g. !spotify Disturbed | The Sound Of Silence'
-  //   +'```'
-  // }
+
+
+  exports.info = {
+    command:'spotify',
+    info: 'Uses Spotify API to get artists and tracks',
+    usage: 'Search for band: "!spotify [band name]" e.g. !spotify Disturbed\nSearch for track: "!spotify [band name] | [song name]" e.g. !spotify Disturbed | The Sound Of Silence'
+}
