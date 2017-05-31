@@ -3,7 +3,7 @@ exports.run = (client, message) => {
 };
 
 exports.info = {
-    command:'ping',
-    info: 'Ummm... basic ping command, nothing fancy',
-    usage: 'ping'
+  command:'ping',
+  info: 'Ummm... basic ping command, nothing fancy',
+  usage: 'ping'
 }

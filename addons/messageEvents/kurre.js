@@ -2,8 +2,6 @@ const discord = require('discord.js');
 var fs = require('fs');
 var info = JSON.parse(fs.readFileSync('./addons/data/kurre.json', 'utf8'));
 
-
-
 module.exports = function(client){
   client.on('message', msg => {
     if(msg.author.bot){return;}

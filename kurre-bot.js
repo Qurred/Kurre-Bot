@@ -29,12 +29,12 @@ client.on('disconnect', msg => {
 
 client.shutDown = function(){
   console.log('CLIENT','Starting saving user informations and shutting down');
-    fs.writeFile('./addons/data/users.json', JSON.stringify(client.members, null, ' '), 'utf8', function (err, data) {
-      if(err){
-        console.log(err);
-      }
-      setTimeout(function(){process.exit(0)}, 1500);
-    });
+  fs.writeFile('./addons/data/users.json', JSON.stringify(client.members, null, ' '), 'utf8', function (err, data) {
+    if(err){
+      console.log(err);
+    }
+    setTimeout(function(){process.exit(0)}, 1500);
+  });
 }
 
 client.on('error', err =>{
@@ -48,30 +48,29 @@ client.on('warn', err=>{
 
 client.login(config.token).then(() =>{
   const init = require('./addons/initBot')(client);
-})
-.catch(err => {
+}).catch(err => {
   console.log('Discord.js Error', 'Incorrect Login details');
 });
 
-function givePersonData(_author){
-  var asked_user = members[_author.id];
-  var response_text = 'Username:\t' + asked_user.name + '\nUser ID:\t' +  asked_user.id + '\nWait time:\t' + (asked_user.greeting_th/1000/60) + ' min\nLast login:\t'+ (new Date(asked_user.last_online)) ;
-  if(asked_user.custom_message){
-    response_text += '\nCustom greeting:\t \'' + asked_user.custom_message + '\'';
-  }
-  if(asked_user.osu){
-    response_text += "\nOsu! Profile\nUsername:\t"+asked_user.osu.username+'\n[Link to profile](https://osu.ppy.sh/u/'+asked_user.osu.id+')';
-  }
-  var response = new discord.RichEmbed().setTitle('User Information')
-  .setDescription('This message will contain all data that Kurre-bot has about following user: <@' + _author.id + '>')
-  .setColor(0xF999FF)
-  .addField('Data',response_text,true);
-  _author.sendEmbed(response).then(function() {
-    //Everything is fine
-  })
-  .catch(function(){
-    //Error, send message about it to the asker.
-    //TODO create log about errors
-    _author.sendMessage('Error... Has occupied, please contact Kurre-bot\'s creator');
-  });
-}
+// function givePersonData(_author){
+//   var asked_user = members[_author.id];
+//   var response_text = 'Username:\t' + asked_user.name + '\nUser ID:\t' +  asked_user.id + '\nWait time:\t' + (asked_user.greeting_th/1000/60) + ' min\nLast login:\t'+ (new Date(asked_user.last_online)) ;
+//   if(asked_user.custom_message){
+//     response_text += '\nCustom greeting:\t \'' + asked_user.custom_message + '\'';
+//   }
+//   if(asked_user.osu){
+//     response_text += "\nOsu! Profile\nUsername:\t"+asked_user.osu.username+'\n[Link to profile](https://osu.ppy.sh/u/'+asked_user.osu.id+')';
+//   }
+//   var response = new discord.RichEmbed().setTitle('User Information')
+//   .setDescription('This message will contain all data that Kurre-bot has about following user: <@' + _author.id + '>')
+//   .setColor(0xF999FF)
+//   .addField('Data',response_text,true);
+//   _author.sendEmbed(response).then(function() {
+//     //Everything is fine
+//   })
+//   .catch(function(){
+//     //Error, send message about it to the asker.
+//     //TODO create log about errors
+//     _author.sendMessage('Error... Has occupied, please contact Kurre-bot\'s creator');
+//   });
+// }
