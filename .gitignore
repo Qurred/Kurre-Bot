@@ -14,5 +14,8 @@ data/*.json
 ##  Addons
 ################
 
+test.js
+addons/util/*.json
 addons/data/*.json
 *.log
+map.png
